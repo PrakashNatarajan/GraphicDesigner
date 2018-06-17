@@ -33,7 +33,7 @@ class GraphicsController < ApplicationController
         format.html { redirect_to graphics_path, notice: 'Graphic was successfully created.' }
         format.json { render :show, status: :created, location: @graphic }
       else
-        format.html { render :new }
+        format.html { redirect_to graphics_path }
         format.json { render json: @graphic.errors, status: :unprocessable_entity }
       end
     end
