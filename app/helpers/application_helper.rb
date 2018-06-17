@@ -1,5 +1,9 @@
 module ApplicationHelper
 
+	def current_user
+	  session[:user]
+	end
+
 	def get_color_code(shape)
 	  color_code = if not shape.graphics.empty?
 	  	shape.graphics.last.color_code

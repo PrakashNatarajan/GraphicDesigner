@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root 'home#dashboard'
   resources :graphics
   resources :users
   resources :shapes

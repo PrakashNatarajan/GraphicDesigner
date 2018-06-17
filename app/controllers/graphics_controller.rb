@@ -30,7 +30,7 @@ class GraphicsController < ApplicationController
 
     respond_to do |format|
       if @graphic.save
-        format.html { redirect_to @graphic, notice: 'Graphic was successfully created.' }
+        format.html { redirect_to graphics_path, notice: 'Graphic was successfully created.' }
         format.json { render :show, status: :created, location: @graphic }
       else
         format.html { render :new }

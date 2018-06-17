@@ -1,4 +1,4 @@
-<%= form_with(model: graphic, local: true) do |form| %>
+<%= form_with(model: graphic, local: true, id: "graphic-form") do |form| %>
   <% if graphic.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(graphic.errors.count, "error") %> prohibited this graphic from being saved:</h2>
@@ -18,7 +18,7 @@
 
   <div class="field">
     <%= form.label :user_id %>
-    <%= form.number_field :user_id %>
+    <%= form.number_field :user_id, {value: current_user["id"]} %>
   </div>
 
   <div class="field">

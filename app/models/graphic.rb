@@ -4,6 +4,8 @@ class Graphic < ApplicationRecord
 	belongs_to :shape
 	belongs_to :user
 
+	validates :color_id, :shape_id, :user_id, presence: true
+
 	delegate :code, to: :color, prefix: true
 	delegate :name, to: :shape, prefix: true
 	delegate :name, to: :user, prefix: true
