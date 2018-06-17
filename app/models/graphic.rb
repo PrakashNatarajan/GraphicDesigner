@@ -15,4 +15,5 @@ class Graphic < ApplicationRecord
 		graphic.color_id = args[:color_id]
 		graphic
     end
+    
 end
