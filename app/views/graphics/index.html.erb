@@ -2,13 +2,27 @@
 
 <h1>Graphics</h1>
 
+<div class="colors">
+  <%@colors.each do |colors|%>
+    <div class="row">
+      <%colors.each do |color|%>
+        <div class="box" style="background-color:<%= color.code %>">
+          <div class="inner"></div>
+        </div>
+      <%end%>
+    </div>
+  <%end%>
+</div>
 
 <div class="grid">
   <%@shapes.each do |shapes|%>
     <div class="row">
       <%shapes.each do |shape|%>
-        <div class="box" style="background-color:<%= 'tomato' %>">
-          <div class="inner">1</div>
+        <%color_code = get_color_code(shape)%>
+        <%updated_at = get_updated_at(shape)%>
+        <%user_name = get_user_name(shape)%>
+        <div class="box" style="background-color:<%= color_code %>">
+          <div class="tooltiptext"><%= "#{user_name} at #{updated_at}" %></div>
         </div>
       <%end%>
     </div>
@@ -20,6 +34,16 @@ body {
   margin: 20px;
 }
 
+.colors {
+  margin: 0 auto;
+  width: 80vw;
+  max-width: 30vh;
+  height: 80vw;
+  max-height: 60vh;
+  font-size: 1rem;
+  float: left;
+}
+
 .grid {
   margin: 0 auto;
   width: 80vw;
@@ -27,6 +51,7 @@ body {
   height: 80vw;
   max-height: 60vh;
   font-size: 1rem;
+  float: right;
 }
 .row {
   display: flex;
@@ -54,4 +79,24 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.box .tooltiptext {
+    visibility: hidden;
+    width: 90px;
+    background-color: green;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    margin-left: 20px; 
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.box:hover .tooltiptext {
+    visibility: visible;
+}
+
 </style>

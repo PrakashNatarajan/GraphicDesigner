@@ -4,7 +4,8 @@ class GraphicsController < ApplicationController
   # GET /graphics
   # GET /graphics.json
   def index
-    @shapes = Shape.order(name: :asc).each_slice(20)
+    @colors = Color.order(name: :asc).each_slice(3)
+    @shapes = Shape.includes(:graphics).order(name: :asc).each_slice(20)
     @graphics = Graphic.all
   end
 
@@ -25,7 +26,7 @@ class GraphicsController < ApplicationController
   # POST /graphics
   # POST /graphics.json
   def create
-    @graphic = Graphic.new(graphic_params)
+    @graphic = Graphic.create_or_update(graphic_params)
 
     respond_to do |format|
       if @graphic.save
