@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Shape:</strong>
+  <%= @graphic.shape_id %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @graphic.user_id %>
+</p>
+
+<p>
+  <strong>Color:</strong>
+  <%= @graphic.color_id %>
+</p>
+
+<%= link_to 'Edit', edit_graphic_path(@graphic) %> |
+<%= link_to 'Back', graphics_path %>

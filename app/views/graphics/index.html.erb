@@ -1,0 +1,57 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Graphics</h1>
+
+
+<div class="grid">
+  <%@shapes.each do |shapes|%>
+    <div class="row">
+      <%shapes.each do |shape|%>
+        <div class="box" style="background-color:<%= 'tomato' %>">
+          <div class="inner">1</div>
+        </div>
+      <%end%>
+    </div>
+  <%end%>
+</div>
+
+<style>
+body {
+  margin: 20px;
+}
+
+.grid {
+  margin: 0 auto;
+  width: 80vw;
+  max-width: 90vh;
+  height: 80vw;
+  max-height: 60vh;
+  font-size: 1rem;
+}
+.row {
+  display: flex;
+}
+.box {
+  margin: 5px;
+  color: white;
+  font-weight: bold;
+  flex: 1 0 auto;
+  position: relative;
+}
+.box:after {
+  content: "";
+  float:left;
+  display: block;
+  padding-top: 100%;
+}
+.box .inner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

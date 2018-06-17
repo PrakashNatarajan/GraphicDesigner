@@ -1,0 +1,32 @@
+<%= form_with(model: graphic, local: true) do |form| %>
+  <% if graphic.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(graphic.errors.count, "error") %> prohibited this graphic from being saved:</h2>
+
+      <ul>
+      <% graphic.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :shape_id %>
+    <%= form.number_field :shape_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :user_id %>
+    <%= form.number_field :user_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :color_id %>
+    <%= form.number_field :color_id %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
