@@ -6,7 +6,6 @@ class GraphicsController < ApplicationController
   def index
     @colors = Color.order(name: :asc).each_slice(3)
     @shapes = Shape.includes(:graphics).order(name: :asc).each_slice(20)
-    @graphics = Graphic.all
   end
 
   # GET /graphics/1
