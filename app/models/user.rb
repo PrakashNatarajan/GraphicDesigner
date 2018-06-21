@@ -18,5 +18,8 @@ class User < ApplicationRecord
 	end
 
 
+	def users_table
+	  arel_table
+	end
 
 end

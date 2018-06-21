@@ -16,4 +16,9 @@ class Graphic < ApplicationRecord
 		graphic
     end
     
+
+    def graphics_table
+	  arel_table
+	end
+
 end

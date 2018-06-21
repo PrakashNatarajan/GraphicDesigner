@@ -5,7 +5,8 @@ class GraphicsController < ApplicationController
   # GET /graphics.json
   def index
     @colors = Color.order(name: :asc).each_slice(3)
-    @shapes = Shape.includes(:graphics).order(name: :asc).each_slice(20)
+    #@shapes = Shape.includes(:graphics).order(name: :asc).each_slice(20)
+    @shapes = Shape.fetch_graphics_colors_users(400, 0).each_slice(20)
   end
 
   # GET /graphics/1

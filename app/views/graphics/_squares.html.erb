@@ -1,0 +1,19 @@
+<div class="grid">
+  <%@shapes.each do |shapes|%>
+    <div class="row">
+      <%shapes.each do |shape|%>
+        <%color_code = get_color_code(shape)%>
+        <%updated_at = get_updated_at(shape)%>
+        <%user_name = get_user_name(shape)%>
+        <div class="box" shape-id="<%=shape.shape_id%>" style="background-color:<%= color_code %>">
+          <%tool_tip = shape_tool_tip(user_name, updated_at)%>
+          <%if tool_tip != "at"%>
+            <div class="tooltiptext">
+              <%= tool_tip %>
+            </div>
+          <%end%>
+        </div>
+      <%end%>
+    </div>
+  <%end%>
+</div>

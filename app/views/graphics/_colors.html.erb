@@ -1,0 +1,11 @@
+<div class="colors">
+  <%@colors.each do |colors|%>
+    <div class="row">
+      <%colors.each do |color|%>
+        <div class="box" color-id="<%=color.id%>" style="background-color:<%= color.code %>">
+          <div class="inner"></div>
+        </div>
+      <%end%>
+    </div>
+  <%end%>
+</div>

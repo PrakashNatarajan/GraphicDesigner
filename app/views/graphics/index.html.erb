@@ -2,110 +2,11 @@
 
 <h1>Graphics</h1>
 
-<div class="colors">
-  <%@colors.each do |colors|%>
-    <div class="row">
-      <%colors.each do |color|%>
-        <div class="box" color-id="<%=color.id%>" style="background-color:<%= color.code %>">
-          <div class="inner"></div>
-        </div>
-      <%end%>
-    </div>
-  <%end%>
-</div>
+<%=render(:partial => "colors")%>
 
-<div class="grid">
-  <%@shapes.each do |shapes|%>
-    <div class="row">
-      <%shapes.each do |shape|%>
-        <%color_code = get_color_code(shape)%>
-        <%updated_at = get_updated_at(shape)%>
-        <%user_name = get_user_name(shape)%>
-        <div class="box" shape-id="<%=shape.id%>" style="background-color:<%= color_code %>">
-          <div class="tooltiptext"><%= "#{user_name} at #{updated_at}" %></div>
-        </div>
-      <%end%>
-    </div>
-  <%end%>
-</div>
+<%=render(:partial => "squares")%>
 
 
 <div class="form">
   <%= render 'form', graphic: Graphic.new %>
 </div>
-
-<style>
-body {
-  margin: 20px;
-}
-
-.colors {
-  margin: 0 auto;
-  width: 80vw;
-  max-width: 30vh;
-  height: 80vw;
-  max-height: 60vh;
-  font-size: 1rem;
-  float: left;
-}
-
-.form {
-    display: none;
-    float: right;
-}
-.grid {
-  margin: 0 auto;
-  width: 80vw;
-  max-width: 90vh;
-  height: 80vw;
-  max-height: 60vh;
-  font-size: 1rem;
-  float: center;
-}
-.row {
-  display: flex;
-}
-.box {
-  margin: 5px;
-  color: white;
-  font-weight: bold;
-  flex: 1 0 auto;
-  position: relative;
-}
-.box:after {
-  content: "";
-  float:left;
-  display: block;
-  padding-top: 100%;
-}
-.box .inner {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.box .tooltiptext {
-    visibility: hidden;
-    width: 90px;
-    background-color: green;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    margin-left: 20px; 
-
-    /* Position the tooltip */
-    position: absolute;
-    z-index: 1;
-}
-
-.box:hover .tooltiptext {
-    visibility: visible;
-}
-
-</style>
