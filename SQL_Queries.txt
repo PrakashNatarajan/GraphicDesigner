@@ -1,0 +1,87 @@
+select shape_id,shape_name,color_id,user_id,shape_last_updated_at from (
+select s.id as shape_id, s.name as shape_name,g.color_id,g.user_id, g.updated_at as shape_last_updated_at
+ from shapes s left join
+(select shape_id,color_id,user_id,updated_at from graphics where (shape_id,updated_at) in
+(select shape_id,max(updated_at) as max_updated_at from graphics group by 1))g
+on s.id = g.shape_id) tab1
+
+
+
+
+
+select shape_id,shape_name, c.code, u.name, shape_last_updated_at from (
+select shape_id,shape_name,color_id,user_id,shape_last_updated_at from (
+select s.id as shape_id, s.name as shape_name,g.color_id,g.user_id, g.updated_at as shape_last_updated_at
+ from shapes s left join
+(select shape_id,color_id,user_id,updated_at from graphics where (shape_id,updated_at) in
+(select shape_id,max(updated_at) as max_updated_at from graphics group by 1))g
+on s.id = g.shape_id)) AS tab1 LEFT JOIN colors c ON tab1.color_id = c.id
+LEFT JOIN users u ON tab1.user_id = u.id order by 1;
+
+
+select shape_id,shape_name, c.code, u.name, shape_last_updated_at from (
+select shape_id,shape_name,color_id,user_id,shape_last_updated_at from (
+select s.id as shape_id, s.name as shape_name,g.color_id,g.user_id, g.updated_at as shape_last_updated_at
+ from shapes s left join
+(select shape_id,color_id,user_id,updated_at from graphics where (shape_id,updated_at) in
+(select shape_id,max(updated_at) as max_updated_at from graphics group by 1))g
+on s.id = g.shape_id)) AS tab1 LEFT JOIN colors c ON tab1.color_id = c.id
+LEFT JOIN users u ON tab1.user_id = u.id order by 1;
+
+
+select shapes.id as shape_id, shapes.name as shape_name, graphics_grp.color_code, graphics_grp.user_name, graphics_grp.last_updated_at from shapes 
+left outer join (select graphics.shape_id as grp_shape_id, colors.code as color_code, users.name as user_name, max(graphics.updated_at) as last_updated_at from graphics 
+inner join colors on colors.id = graphics.color_id
+inner join users on users.id = graphics.user_id
+group by graphics.shape_id) as graphics_grp
+on shapes.id = graphics_grp.grp_shape_id;
+
+
+
+select shapes.id as shape_id, shapes.name as shape_name, graphics_grp.color_code as color_code, graphics_grp.user_name as user_name, graphics_grp.last_updated_at as last_updated_at from shapes 
+left outer join (select graphics.shape_id as grp_shape_id, colors.code as color_code, users.name as user_name, max(graphics.updated_at) as last_updated_at from graphics 
+inner join colors on colors.id = graphics.color_id
+inner join users on users.id = graphics.user_id
+group by graphics.shape_id) as graphics_grp
+on shapes.id = graphics_grp.grp_shape_id;
+
+
+select shapes.id as shape_id, shapes.name as shape_name, graphics_grp.color_code as color_code, graphics_grp.user_name as user_name, graphics_grp.last_updated_at as last_updated_at from shapes 
+left outer join (select graphics.shape_id as grp_shape_id, colors.code as color_code, users.name as user_name, max(graphics.updated_at) as last_updated_at from graphics 
+inner join colors on colors.id = graphics.color_id
+inner join users on users.id = graphics.user_id
+group by graphics.shape_id) as graphics_grp
+on shapes.id = graphics_grp.grp_shape_id
+limit 30, 10;
+
+
+graphics_query = Graphic.select("graphics.shape_id AS grp_shape_id", "colors.code AS color_code", "users.name AS user_name", "MAX(graphics.updated_at) AS last_updated_at").joins(:color, :user).group(:shape_id).explain
+
+ArelQueries:-
+shapes = Shape.arel_table
+graphics = Graphic.arel_table
+colors = Color.arel_table
+users = User.arel_table
+graphics.project([graphics[:shape_id].as("grp_shape_id"), graphics[:color_id].as("shape_name"), colors[:code].as("color_code"), users[:name].as("user_name"), graphics[:updated_at].maximum.as("last_updated_at")]).to_sql
+
+graphics.join(colors).on(graphics[:color_id].eq(colors[:id])).project([graphics[:shape_id].as("grp_shape_id"), colors[:code].as("color_code"), users[:name].as("user_name"), graphics[:updated_at].maximum.as("last_updated_at")]).to_sql
+
+
+graphics.join(colors).on(graphics[:color_id].eq(colors[:id])).join(users).on(graphics[:user_id].eq(users[:id])).project([graphics[:shape_id].as("grp_shape_id"), colors[:code].as("color_code"), users[:name].as("user_name"), graphics[:updated_at].maximum.as("last_updated_at")]).to_sql
+
+graphics_grp = graphics.join(colors).on(graphics[:color_id].eq(colors[:id])).join(users).on(graphics[:user_id].eq(users[:id])).group(graphics[:shape_id]).project([graphics[:shape_id].as("grp_shape_id"), colors[:code].as("color_code"), users[:name].as("user_name"), graphics[:updated_at].maximum.as("last_updated_at")]).as("graphics_grp")
+
+graphics_grp.to_sql.gsub('"', "")
+ => "(SELECT graphics.shape_id AS grp_shape_id, colors.code AS color_code, users.name AS user_name, MAX(graphics.updated_at) AS last_updated_at FROM graphics INNER JOIN colors ON graphics.color_id = colors.id INNER JOIN users ON graphics.user_id = users.id GROUP BY graphics.shape_id) graphics_grp"
+
+
+
+shape_graphics = shapes.join(graphics_grp, Arel::Nodes::OuterJoin).on(shapes[:id].eq(graphics_grp[:grp_shape_id])).project([shapes[:id].as("shape_id"), shapes[:name].as("shape_name"), graphics_grp[:color_code].as("color_code"), graphics_grp[:user_name].as("user_name"), graphics_grp[:last_updated_at].as("last_updated_at")]).take(10).skip(0)
+
+shape_graphics.to_sql.gsub('"', "")
+ => "SELECT  shapes.id AS shape_id, shapes.name AS shape_name, graphics_grp.color_code AS color_code, graphics_grp.user_name AS user_name, graphics_grp.last_updated_at AS last_updated_at FROM shapes LEFT OUTER JOIN (SELECT graphics.shape_id AS grp_shape_id, colors.code AS color_code, users.name AS user_name, MAX(graphics.updated_at) AS last_updated_at FROM graphics INNER JOIN colors ON graphics.color_id = colors.id INNER JOIN users ON graphics.user_id = users.id GROUP BY graphics.shape_id) graphics_grp ON shapes.id = graphics_grp.grp_shape_id LIMIT 10 OFFSET 0"
+
+ Shape.find_by_sql(shape_graphics.to_sql.gsub('"', ""))
+
+ shapes = Shape.find_by_sql(shape_graphics.to_sql.gsub('"', "")); nil
+  Shape Load (2.2ms)  SELECT shapes.id AS shape_id, shapes.name AS shape_name, graphics_grp.color_code AS color_code, graphics_grp.user_name AS user_name, graphics_grp.last_updated_at AS last_updated_at FROM shapes LEFT OUTER JOIN (SELECT graphics.shape_id AS grp_shape_id, colors.code AS color_code, users.name AS user_name, MAX(graphics.updated_at) AS last_updated_at FROM graphics INNER JOIN colors ON graphics.color_id = colors.id INNER JOIN users ON graphics.user_id = users.id GROUP BY graphics.shape_id) graphics_grp ON shapes.id = graphics_grp.grp_shape_id

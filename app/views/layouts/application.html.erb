@@ -10,7 +10,16 @@
   </head>
 
   <body>
-    <%=content_tag(:h3, "User: #{current_user["name"]}", class: "current_user") if not current_user.blank?%>
-    <%= yield %>
+    <div class="container">
+      <p class="notice"><%= notice %></p>
+      <p class="alert"><%= alert %></p>
+      <%if params[:controller] == "chats"%>
+        <%=render(partial: "home/login")%>
+        <%=render(partial: "home/registration")%>
+      <%else%>
+        <%=content_tag(:h3, "User: #{current_user["name"]}", class: "current_user") if not current_user.blank?%>
+      <%end%>
+      <%= yield %>
+    </div>
   </body>
 </html>

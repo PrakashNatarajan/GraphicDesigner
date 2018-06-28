@@ -1,0 +1,9 @@
+<% if member_signed_in? %>
+  <li>
+  <%= link_to('Edit registration', edit_member_registration_path) %>
+  </li>
+<% else %>
+  <li>
+  <%= link_to('Register', new_member_registration_path)  %>
+  </li>
+<% end %>

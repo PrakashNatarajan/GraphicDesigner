@@ -1,6 +1,7 @@
 class HomeController < ApplicationController
 
-  def dashboard
+  def index
+
   end
   
 end
