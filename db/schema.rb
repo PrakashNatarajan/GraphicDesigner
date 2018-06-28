@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_28_135336) do
+ActiveRecord::Schema.define(version: 2018_06_28_162600) do
 
   create_table "colors", force: :cascade do |t|
     t.string "name"
@@ -19,11 +19,25 @@ ActiveRecord::Schema.define(version: 2018_06_28_135336) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "conversation_members", id: false, force: :cascade do |t|
+    t.integer "conversation_id"
+    t.integer "member_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_conversation_members_on_conversation_id"
+    t.index ["member_id"], name: "index_conversation_members_on_member_id"
+  end
+
   create_table "conversations", force: :cascade do |t|
     t.integer "recipient_id"
     t.integer "sender_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "active"
+    t.string "contype"
+    t.string "name"
+    t.index ["contype", "name", "sender_id"], name: "index_conversations_on_contype_and_name_and_sender_id", unique: true
+    t.index ["contype", "recipient_id", "sender_id"], name: "index_conversations_on_contype_and_recipient_id_and_sender_id", unique: true
     t.index ["recipient_id", "sender_id"], name: "index_conversations_on_recipient_id_and_sender_id", unique: true
     t.index ["recipient_id"], name: "index_conversations_on_recipient_id"
     t.index ["sender_id"], name: "index_conversations_on_sender_id"

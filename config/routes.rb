@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   resources :users
   resources :shapes
   resources :colors
-  resources :conversations, only: [:create] do
+  resources :conversations do
   	member do
       post :close
     end
