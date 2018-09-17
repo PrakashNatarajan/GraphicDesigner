@@ -129,9 +129,11 @@ func (client *Client) write(manager *ClientManager) {
 func serveWs(manager *ClientManager, res http.ResponseWriter, req *http.Request) {
     conn, err := (&websocket.Upgrader{CheckOrigin: func(req *http.Request) bool { return true }}).Upgrade(res, req, nil)
     if err != nil {
+        fmt.Println(err)
         http.NotFound(res, req)
         return
     }
+    //userid := req.URL.Query().Get("userid")
     usrid, err := strconv.Atoi(req.FormValue("userid"))
     if err != nil {
         http.NotFound(res, req)
