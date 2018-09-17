@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Chat Example</title>
+<script type="text/javascript">
+window.onload = function () {
+    var conn;
+    var receiver = document.getElementById("receiver");
+    var content = document.getElementById("content");
+    var msgslog = document.getElementById("msgslog");
+    var members = document.getElementById("members");
+
+    function appendmsgslog(item) {
+        var doScroll = msgslog.scrollTop > msgslog.scrollHeight - msgslog.clientHeight - 1;
+        msgslog.appendChild(item);
+        if (doScroll) {
+            msgslog.scrollTop = msgslog.scrollHeight - msgslog.clientHeight;
+        }
+    }
+
+    function appendmembers(msgobj) {
+        var doScroll = members.scrollTop > members.scrollHeight - members.clientHeight - 1;
+        var memstr = "<ul>"
+        for (var j = 0; j < msgobj.length; j++) {
+            if (msgobj[j] != "") {
+                memstr += "<li>" + msgobj[j] + "</li>"
+            }
+        }
+        memstr += "</ul>"
+        members.innerHTML = memstr;
+        if (doScroll) {
+            members.scrollTop = members.scrollHeight - members.clientHeight;
+        }
+    }
+
+    document.getElementById("form").onsubmit = function () {
+        if (!conn) {
+            return false;
+        }
+        
+        if (!content.value) {
+            return false;
+        }
+        message = JSON.stringify({receiver: receiver.value, content: content.value})
+        conn.send(message);
+        receiver.value = ""
+        content.value = "";
+        return false;
+    };
+
+    if (window["WebSocket"]) {
+        conn = new WebSocket("ws://localhost:12345/chat");
+        conn.onclose = function (event) {
+            var item = document.createElement("div");
+            item.innerHTML = "<b>Connection closed.</b>";
+            appendmsgslog(item);
+        };
+        conn.onmessage = function (event) {
+            var messages = event.data.split('\n');
+            for (var i = 0; i < messages.length; i++) {
+                var item = document.createElement("div");
+                var msgobj = JSON.parse(messages[i]);
+                console.log(msgobj.sender == null)
+                if (msgobj.sender == null) {
+                    appendmembers(msgobj);
+                } else {
+                    item.innerText = messages[i];
+                    appendmsgslog(item);
+                }
+            }
+        };
+    } else {
+        var item = document.createElement("div");
+        item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+        appendmsgslog(item);
+    }
+};
+</script>
+<style type="text/css">
+html {
+    overflow: hidden;
+}
+
+body {
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: gray;
+}
+
+.chatblock {
+    width: 100%;
+}
+
+.msgsmbms {
+    width: 100%;
+}
+
+#msgslog {
+    background: white;
+    margin: 0;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    position: absolute;
+    top: 0.5em;
+    left: 2.5em;
+    right: 0.5em;
+    bottom: 3em;
+    overflow: auto;
+    float: left;
+    width: 45%;
+}
+
+#members {
+    background: white;
+    margin: 0;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    position: absolute;
+    top: 0.5em;
+    left: 41.5em;
+    bottom: 3em;
+    overflow: auto;
+    float: right;
+    width: 45%;
+}
+
+#form {
+    padding: 0 0.5em 0 0.5em;
+    margin: 10em 0 0 0;
+    position: absolute;
+    bottom: 1em;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+<div class="chatblock">
+    <div class="msgsmbms">
+        <div id="msgslog"></div>
+        <div id="members"></div>
+    </div>
+    <div class="sendmsg">
+       <form id="form">
+            Receipent: <input type="text" id="receiver" size="64"/>
+            <br />
+            Content: <input type="text" id="content" size="64"/>
+            <br />
+            <input type="submit" value="Send" />
+        </form> 
+    </div>
+</div>
+
+
+
+</body>
+</html>
