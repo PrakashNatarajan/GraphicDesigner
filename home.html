@@ -49,7 +49,7 @@ window.onload = function () {
     };
 
     if (window["WebSocket"]) {
-        conn = new WebSocket("ws://localhost:12345/chat");
+        conn = new WebSocket("ws://localhost:12345/chat?userid=123");
         conn.onclose = function (event) {
             var item = document.createElement("div");
             item.innerHTML = "<b>Connection closed.</b>";

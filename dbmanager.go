@@ -5,6 +5,7 @@ import (
 	"database/sql"
     _ "github.com/mattn/go-sqlite3"
     "strconv"
+    "time"
 )
 
 // DBManager maintains the set of active db connection
@@ -25,17 +26,18 @@ func newDBManager() *DBManager {
 	}
 }
 
-func (manager *DBManager) CreateRecord(guid, sender, receiver, content int) {
-    statement, err := manager.database.Prepare("INSERT OR REPLACE INTO messages (guid, sender, receiver, content, status) VALUES (?, ?, ?, ?, ?)")
+func (manager *DBManager) CreateRecord(shape_id, user_id, color_id int) {
+    statement, err := manager.database.Prepare("INSERT OR REPLACE INTO graphics (shape_id, user_id, color_id, created_at, updated_at) VALUES (?, ?, ?, ?, ?)")
     if err != nil {
         fmt.Println("Sqlite3 DB Insert Error:", err)
         return
     }
-    statement.Exec(guid, sender, receiver, content, "UnSent")
+    dateTime := time.Now()
+    statement.Exec(shape_id, user_id, color_id, dateTime, dateTime)
 }
 
 func (manager *DBManager) UpdateRecord(guid, status string) {
-    statement, err := manager.database.Prepare("UPDATE messages SET status = ? WHERE guid = ?")
+    statement, err := manager.database.Prepare("UPDATE graphics SET status = ? WHERE guid = ?")
     if err != nil {
         fmt.Println("Sqlite3 DB Update Error:", err)
         return
@@ -43,9 +45,9 @@ func (manager *DBManager) UpdateRecord(guid, status string) {
     statement.Exec(status, guid)
 }
 
-func (manager *DBManager) GetRecordStatus(guid int) (status string) {
-    Id := strconv.Itoa(guid)
-    query := "SELECT status FROM messages WHERE guid = " + Id + " LIMIT 1 OFFSET 0;"
+func (manager *DBManager) GetColorCode(clrId int) (code string) {
+    Id := strconv.Itoa(clrId)
+    query := "SELECT code FROM colors WHERE id = " + Id + " LIMIT 1 OFFSET 0;"
     fmt.Println(query)
     rows, err := manager.database.Query(query) 
     if err != nil {
@@ -53,9 +55,9 @@ func (manager *DBManager) GetRecordStatus(guid int) (status string) {
         return
     }
     for rows.Next() {
-        rows.Scan(&status)
+        rows.Scan(&code)
     }
-    return status
+    return code
 }
 
 

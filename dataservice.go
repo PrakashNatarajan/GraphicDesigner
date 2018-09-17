@@ -9,6 +9,7 @@ import (
     "time"
     "encoding/json"
     "github.com/gorilla/websocket"
+    //"golang.org/x/net/websocket"
     "fmt"
     "strconv"
 )
@@ -58,6 +59,11 @@ type Graphic struct {
     UpdatedAt  int `json:"updated_at,omitempty"`
 }
 
+type ShapeColor struct {
+    ShapeId  int `json:"shape_id,omitempty"`
+    ClrCode  string `json:"color_id,omitempty"`
+}
+
 // readPump pumps messages from the websocket connection to the hub.
 //
 // The application runs readPump in a per-connection goroutine. The application
@@ -99,8 +105,7 @@ func (client *Client) read(manager *ClientManager) {
 // executing all writes from this goroutine.
 func (client *Client) write(manager *ClientManager) {
     
-
-    //database := manager.database
+    database := manager.database
     for {
         select {
         case graphic, ok := <-client.sendMsg:
@@ -108,12 +113,13 @@ func (client *Client) write(manager *ClientManager) {
                 client.socket.WriteMessage(websocket.CloseMessage, []byte{})
                 return
             }
-            //msgstatus := database.GetRecordStatus(graphic.Id)
+            colorCode := database.GetColorCode(graphic.ColorId)
             receClient := manager.regClients[graphic.UserId]
             defer func() {
                 receClient.socket.Close()
             }()
-            jsonGraphic, err := json.Marshal(&graphic)
+            shapeClr = ShapeColor{ShapeId: graphic.ShapeId, ClrCode: colorCode}
+            jsonGraphic, err := json.Marshal(&shapeClr)
             if err != nil {
                 fmt.Println("Write function error:", err)
                 manager.unregister <- client
