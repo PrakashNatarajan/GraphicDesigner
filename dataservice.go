@@ -61,7 +61,7 @@ type Graphic struct {
 
 type ShapeColor struct {
     ShapeId  int `json:"shape_id,omitempty"`
-    ClrCode  string `json:"color_id,omitempty"`
+    ClrCode  string `json:"clrcode,omitempty"`
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -93,7 +93,7 @@ func (client *Client) read(manager *ClientManager) {
             break
         }
         //fmt.Println("recicont:", recicont.Content, "Receiver: ", recicont.Receiver)
-        database.CreateRecord(graphic.ShapeId, graphic.UserId, graphic.ColorId, graphic.ColorId)
+        database.CreateRecord(graphic.ShapeId, graphic.UserId, graphic.ColorId)
         manager.broadcast <- graphic
     }
 }
@@ -118,7 +118,7 @@ func (client *Client) write(manager *ClientManager) {
             defer func() {
                 receClient.socket.Close()
             }()
-            shapeClr = ShapeColor{ShapeId: graphic.ShapeId, ClrCode: colorCode}
+	        shapeClr := ShapeColor{ShapeId: graphic.ShapeId, ClrCode: colorCode}
             jsonGraphic, err := json.Marshal(&shapeClr)
             if err != nil {
                 fmt.Println("Write function error:", err)
