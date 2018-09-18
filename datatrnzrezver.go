@@ -55,8 +55,8 @@ type Graphic struct {
     ShapeId  int `json:"shape_id,omitempty"`
     UserId  int `json:"user_id,omitempty"`
     ColorId  int `json:"color_id,omitempty"`
-    CreatedAt  int `json:"created_at,omitempty"`
-    UpdatedAt  int `json:"updated_at,omitempty"`
+    CreatedAt  time.Time `json:"created_at,omitempty"`
+    UpdatedAt  time.Time `json:"updated_at,omitempty"`
 }
 
 type ShapeColor struct {

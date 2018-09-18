@@ -36,6 +36,9 @@ func main() {
     manager.database = database
     go manager.Process()
     http.HandleFunc("/", serveHome)
+    http.HandleFunc("/shapes", func(res http.ResponseWriter, req *http.Request) {
+        serveShapeGraphics(manager, res, req)
+    })
     http.HandleFunc("/chat", func(res http.ResponseWriter, req *http.Request) {
         serveWs(manager, res, req)
     })
