@@ -5,7 +5,7 @@
         <%color_code = get_color_code(shape)%>
         <%updated_at = get_updated_at(shape)%>
         <%user_name = get_user_name(shape)%>
-        <div class="box" shape-id="<%=shape.shape_id%>" style="background-color:<%= color_code %>">
+        <div class="box" id="shape-id-<%=shape.shape_id%>" shape-id="<%=shape.shape_id%>" style="background-color:<%= color_code %>">
           <%tool_tip = shape_tool_tip(user_name, updated_at)%>
           <%if tool_tip != "at"%>
             <div class="tooltiptext">
