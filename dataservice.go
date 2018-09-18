@@ -146,7 +146,12 @@ func serveWs(manager *ClientManager, res http.ResponseWriter, req *http.Request)
         return
     }
     client := &Client{id: int(usrid), socket: conn, sendMsg: make(chan Graphic)}
-    if manager.regClients[usrid] == nil {
+    if manager.regClients[usrid] != nil {
+        oldClient := manager.regClients[int(usrid)]
+        oldClient.socket.Close()
+        manager.unregister <- oldClient
+        manager.register <- client
+    } else {
         manager.register <- client
     }
     go client.read(manager)
