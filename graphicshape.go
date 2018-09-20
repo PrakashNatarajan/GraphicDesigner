@@ -4,7 +4,7 @@ import (
 	"net/http"
     "log"
     "encoding/json"
-    "time"
+    //"time"
 )
 
 type ShapeGraphic struct {
@@ -12,7 +12,8 @@ type ShapeGraphic struct {
     ShapeName  string `json:"shape_name,omitempty"`
     ColorCode  string `json:"color_code,omitempty"`
     UserName  string `json:"user_name,omitempty"`
-    LastUpdatedAt  time.Time `json:"last_updated_at,omitempty"`
+    //LastUpdatedAt  time.Time `json:"last_updated_at,omitempty"`
+    LastUpdatedAt  string `json:"last_updated_at,omitempty"`
 }
 
 func serveShapeGraphics(manager *ClientManager, res http.ResponseWriter, req *http.Request) {
