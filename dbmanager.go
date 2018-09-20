@@ -63,7 +63,7 @@ func (manager *DBManager) GetColorCode(clrId int) (code string) {
 func (manager *DBManager) GetShapesColorsUsers(limit, offset int) (shapesgraphics []ShapeGraphic) {
     sLimit := strconv.Itoa(limit)
     sOffset := strconv.Itoa(offset)
-    query := "SELECT shapes.id AS shape_id, shapes.name AS shape_name, graphics_colors_users.color_code AS color_code, graphics_colors_users.user_name AS user_name, graphics_colors_users.last_updated_at AS last_updated_at FROM shapes LEFT OUTER JOIN (SELECT graphics.shape_id AS grp_shape_id, colors.code AS color_code, users.name AS user_name, MAX(graphics.updated_at) AS last_updated_at FROM graphics INNER JOIN colors ON graphics.color_id = colors.id INNER JOIN users ON graphics.user_id = users.id GROUP BY graphics.shape_id) AS graphics_colors_users ON shapes.id = graphics_colors_users.grp_shape_id LIMIT " + sLimit + " OFFSET " + sOffset
+    query := "SELECT shapes.id AS shape_id, shapes.name AS shape_name, IFNULL(graphics_colors_users.color_code, 'tomato') AS color_code, IFNULL(graphics_colors_users.user_name, ' ') AS user_name, IFNULL(graphics_colors_users.last_updated_at, ' ') AS last_updated_at FROM shapes LEFT OUTER JOIN (SELECT graphics.shape_id AS grp_shape_id, colors.code AS color_code, users.name AS user_name, MAX(graphics.updated_at) AS last_updated_at FROM graphics INNER JOIN colors ON graphics.color_id = colors.id INNER JOIN users ON graphics.user_id = users.id GROUP BY graphics.shape_id) AS graphics_colors_users ON shapes.id = graphics_colors_users.grp_shape_id LIMIT " + sLimit + " OFFSET " + sOffset
     log.Println(query)
     rows, err := manager.database.Query(query) 
     if err != nil {
@@ -72,16 +72,13 @@ func (manager *DBManager) GetShapesColorsUsers(limit, offset int) (shapesgraphic
     }
     for rows.Next() {
         var shape_id int
-        var shape_name, color_code, user_name, last_updated_at sql.NullString
-        err = rows.Scan(&shape_id, &shape_name, &color_code, &user_name, &last_updated_at)
+        var shapeName, colorCode, userName, lastUpdatedAt string
+        err = rows.Scan(&shape_id, &shapeName, &colorCode, &userName, &lastUpdatedAt)
         if err != nil {
             log.Println(err)
             return
         }
-        shapeName := getFieldValue(shape_name)
-        colorCode := getFieldValue(color_code)
-        userName := getFieldValue(user_name)
-        lastUpdatedAt := getFieldValue(last_updated_at)
+        
         shgrp := ShapeGraphic{ShapeId: shape_id, ShapeName: shapeName, ColorCode: colorCode, UserName: userName, LastUpdatedAt: lastUpdatedAt}
         shapesgraphics = append(shapesgraphics, shgrp)
     }
@@ -93,7 +90,7 @@ func getFieldValue(nullString sql.NullString) (FieldValue string) {
     if nullString.Valid {
         FieldValue = nullString.String
     } else {
-        FieldValue = ""
+        FieldValue = " "
     }
     return FieldValue
 }
