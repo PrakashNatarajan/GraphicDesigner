@@ -86,6 +86,32 @@ func (manager *DBManager) GetShapesColorsUsers(limit, offset int) (shapesgraphic
     return shapesgraphics
 }
 
+func (manager *DBManager) GetColorCodes(limit, offset int) (colors []Color) {
+    cLimit := strconv.Itoa(limit)
+    cOffset := strconv.Itoa(offset)
+    query := "SELECT id, name, code FROM colors ORDER BY name ASC LIMIT " + cLimit + " OFFSET " + cOffset + ";"
+    log.Println(query)
+    rows, err := manager.database.Query(query) 
+    if err != nil {
+        log.Println("Sqlite3 DB Query Error:", err)
+        return
+    }
+    for rows.Next() {
+        var id int
+        var name, code string
+        err = rows.Scan(&id, &name, &code)
+        if err != nil {
+            log.Println(err)
+            return
+        }
+        
+        color := Color{Id: id, Name: name, Code: code}
+        colors = append(colors, color)
+    }
+    rows.Close()
+    return colors
+}
+
 func getFieldValue(nullString sql.NullString) (FieldValue string) {
     if nullString.Valid {
         FieldValue = nullString.String

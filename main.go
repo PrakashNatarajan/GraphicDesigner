@@ -36,6 +36,9 @@ func main() {
     manager.database = database
     go manager.Process()
     http.HandleFunc("/", serveHome)
+    http.HandleFunc("/colors", func(res http.ResponseWriter, req *http.Request) {
+        serveColors(manager, res, req)
+    })
     http.HandleFunc("/shapes", func(res http.ResponseWriter, req *http.Request) {
         serveShapeGraphics(manager, res, req)
     })
