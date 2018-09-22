@@ -45,19 +45,24 @@ func (manager *DBManager) UpdateRecord(guid, status string) {
     statement.Exec(status, guid)
 }
 
-func (manager *DBManager) GetColorCode(clrId int) (code string) {
-    Id := strconv.Itoa(clrId)
-    query := "SELECT code FROM colors WHERE id = " + Id + " LIMIT 1 OFFSET 0;"
+func (manager *DBManager) GetColorShapeUser(shpId, clrId, usrId int) (shpClrUsr ShapeColorUser) {
+    shpIdstr := strconv.Itoa(shpId)
+    clrIdstr := strconv.Itoa(clrId)
+    usrIdstr := strconv.Itoa(usrId)
+    query := "SELECT graphics.shape_id AS shape_id, colors.code AS clrcode, users.name AS usrname, MAX(graphics.updated_at) AS last_updated_at FROM graphics INNER JOIN colors ON graphics.color_id = colors.id INNER JOIN users ON graphics.user_id = users.id WHERE graphics.shape_id = " + shpIdstr + " AND graphics.user_id = " + usrIdstr + " AND graphics.color_id = " + clrIdstr + " LIMIT 1 OFFSET 0;"
     log.Println(query)
     rows, err := manager.database.Query(query) 
     if err != nil {
         log.Println("Sqlite3 DB Query Error:", err)
         return
     }
+    var shape_id int
+    var clrcode, usrname, last_updated_at string
     for rows.Next() {
-        rows.Scan(&code)
+        rows.Scan(&shape_id, &clrcode, &usrname, &last_updated_at)
     }
-    return code
+    shpClrUsr = ShapeColorUser{ShapeId: shape_id, ClrCode: clrcode, UsrName: usrname, LastUpdatedAt: last_updated_at}
+    return shpClrUsr
 }
 
 func (manager *DBManager) GetShapesColorsUsers(limit, offset int) (shapesgraphics []ShapeGraphic) {
